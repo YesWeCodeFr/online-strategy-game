@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { loginStart, loginSuccess, loginFailure } from '../../store/authSlice';
 import { Button } from '../common/Button';
-import axios from 'axios';
+import { authService } from '../../services/authService';
 import { RootState } from '../../store';
 
 interface LoginFormProps {
@@ -22,12 +22,8 @@ export const LoginForm = ({ onToggleMode }: LoginFormProps) => {
     dispatch(loginStart());
 
     try {
-      const response = await axios.post('/api/auth/login', {
-        username,
-        password,
-      });
-
-      dispatch(loginSuccess(response.data.userId));
+      const response = await authService.login(username, password);
+      dispatch(loginSuccess(response.userId));
       navigate('/');
     } catch (error) {
       dispatch(loginFailure('Identifiants invalides'));

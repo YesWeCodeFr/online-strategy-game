@@ -3,7 +3,8 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { loginStart, loginSuccess, loginFailure } from '../../store/authSlice';
 import { Button } from '../common/Button';
-import axios from 'axios';
+import { authService } from '../../services/authService';
+import { RootState } from '../../store';
 
 interface RegisterFormProps {
   onToggleMode: () => void;
@@ -28,15 +29,11 @@ export const RegisterForm = ({ onToggleMode }: RegisterFormProps) => {
     dispatch(loginStart());
 
     try {
-      const response = await axios.post('/api/auth/register', {
-        username,
-        password,
-      });
-
-      dispatch(loginSuccess(response.data.userId));
+      const response = await authService.register(username, password);
+      dispatch(loginSuccess(response.userId));
       navigate('/');
     } catch (error) {
-      dispatch(loginFailure("Erreur lors de l'inscription"));
+      dispatch(loginFailure(error instanceof Error ? error.message : "Erreur lors de l'inscription"));
     }
   };
 
