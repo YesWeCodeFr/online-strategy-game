@@ -1,8 +1,7 @@
-# Prompts IA générative
-Ces prompts IA ont été utilisés pour affiner la gestion de ce projet, demander des détails sur l'implémentation des sous-projets, etc ...
+[Retour vers le sommaire](sommaire.md)
 
-## Prompt de présentation du contexte du projet (05/03/2025)
-### Prompt
+# Présentation du contexte du projet (05/03/2025)
+## Prompt
 
 ```
 Contexte : 
@@ -14,7 +13,8 @@ Contexte :
 - Il y aura probablement une base de données, je ne sais pas encore si je choisis MongoDB ou bien Postgresql.
 - La documentation du projet et des sous-projets comportera une zone dédiée aux prompts fait à l'IA générative
 ```
-### Réponse
+
+## Réponse
 
 Merci pour ces détails sur votre projet de jeu de stratégie en ligne. Je vais résumer les points clés et ajouter quelques recommandations :
 
