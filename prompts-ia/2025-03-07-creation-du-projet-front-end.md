@@ -1,6 +1,6 @@
 [Retour vers le sommaire](sommaire.md)
 
-# Présentation du contexte du projet (05/03/2025)
+# Création du projet front-end (07/03/2025)
 ## Prompt
 ```
 J'aimerai créer le sous-projet de l'application front. 

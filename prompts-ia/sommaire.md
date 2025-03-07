@@ -4,4 +4,5 @@ Ces prompts IA ont été utilisés pour affiner la gestion de ce projet, demande
 
 - [Présentation du contexte du projet (05/03/2025)](2025-03-05-contexte-du-projet.md)
 - [Création du projet front-end (07/03/2025)](2025-03-07-creation-du-projet-front-end.md)
+- [Création du formulaire d'authentification (07/03/2025)](2025-03-07-creation-formulaire-authentification.md)
 
