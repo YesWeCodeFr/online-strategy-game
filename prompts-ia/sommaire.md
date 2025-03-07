@@ -1,3 +1,4 @@
+[Retour](../README.md)
 # Prompts IA générative
 Ces prompts IA ont été utilisés pour affiner la gestion de ce projet, demander des détails sur l'implémentation des sous-projets, etc ...
 
