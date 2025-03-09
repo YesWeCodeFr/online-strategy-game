@@ -1,0 +1,32 @@
+# Fichiers compilés
+*.o
+*.out
+game-server
+
+# Fichiers de débogage
+*.dSYM/
+*.su
+*.idb
+*.pdb
+
+# Fichiers de développement
+.vscode/
+.idea/
+*.swp
+*~
+
+# Fichiers système
+.DS_Store
+Thumbs.db
+
+# Fichiers de dépendances et build
+/build/
+/bin/
+/lib/
+
+# Fichiers de logs
+*.log
+
+# Fichiers de configuration locaux
+.env
+config.local.h 
