@@ -1,12 +1,39 @@
 import bcrypt from 'bcrypt'
+import net from 'net'
 import { UserRepository } from '../repositories/user.repository'
 import { UserWithoutPassword, LoginResponse } from '../types'
 
 export class UserService {
   private userRepository: UserRepository
+  private readonly GAME_SERVER_PORT = 8888
+  private readonly GAME_SERVER_HOST = 'localhost'
 
   constructor() {
     this.userRepository = new UserRepository()
+  }
+
+  private async notifyGameServer(userId: number): Promise<void> {
+    return new Promise((resolve, reject) => {
+      const client = new net.Socket()
+
+      client.connect(this.GAME_SERVER_PORT, this.GAME_SERVER_HOST, () => {
+        console.log(`Connexion établie avec le serveur de jeu pour l'utilisateur ${userId}`)
+        client.write(userId.toString(), () => {
+          // Fermer la connexion après l'envoi des données
+          client.end()
+        })
+      })
+
+      client.on('error', (error) => {
+        console.error('Erreur de connexion au serveur de jeu:', error)
+        reject(error)
+      })
+
+      client.on('close', () => {
+        console.log(`Notification réussie au serveur de jeu pour l'utilisateur ${userId}`)
+        resolve()
+      })
+    })
   }
 
   async createUser(nom: string, password: string): Promise<UserWithoutPassword> {
@@ -19,7 +46,17 @@ export class UserService {
     }
 
     const hashedPassword = await bcrypt.hash(password, 10)
-    return this.userRepository.create(nom, hashedPassword)
+    const newUser = this.userRepository.create(nom, hashedPassword)
+
+    try {
+      // Notification au serveur de jeu
+      await this.notifyGameServer(newUser.id)
+    } catch (error) {
+      console.error('Impossible de notifier le serveur de jeu:', error)
+      // On ne bloque pas la création de l'utilisateur si la notification échoue
+    }
+
+    return newUser
   }
 
   async login(nom: string, password: string): Promise<LoginResponse> {
