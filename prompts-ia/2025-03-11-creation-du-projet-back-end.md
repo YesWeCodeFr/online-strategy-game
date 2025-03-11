@@ -228,9 +228,11 @@ npm run dev
 L'API sera disponible sur http://localhost:3000.
 
 ## Prompt
+
 j'aimerai que le repertoire du projet back-end s'appelle \"back-end\" et que l'application back-end se nomme \"back-end\"
 
 ## Réponse
+
 Je vais ajuster les noms selon votre demande.
 
 Voici la nouvelle structure :
@@ -295,9 +297,11 @@ L'API sera toujours disponible sur `http://localhost:3000`.
 
 
 ## Prompt
+
 pouvez-vous ajouter le fichier .gitignore dans le dossier back-end ?
 
 ## Réponse
+
 Voici le contenu recommandé pour le fichier .gitignore du projet back-end :
 
 ```text:back-end/.gitignore
@@ -340,10 +344,10 @@ Ce fichier .gitignore couvre :
 - Les dossiers de build potentiels
 
 ## Prompt
+
 J'aimerai que le projet soit entioèrement écrit en typescript, et disposer d'un serveur qui a la capacité de hot-reloading en compilant le code typescript à la volée
 
 ## Réponse
-
 
 Je vais modifier le projet pour utiliser TypeScript avec hot-reloading. Nous allons utiliser `ts-node-dev` pour le développement.
 
