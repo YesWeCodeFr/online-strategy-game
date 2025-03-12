@@ -9,4 +9,5 @@ L'IA utilisée est Claude 3.5 Sonnet dans Cursor.<br/>
 - [Création du formulaire d'authentification (07/03/2025)](2025-03-07-creation-formulaire-authentification.md)
 - [Création du service d'authentification simulée (07/03/2025)](2025-03-07-creation-service-authentification-simulee.md)
 - [Création du projet back-end (11/03/2025)](2025-03-11-creation-du-projet-back-end.md)
-
+- [Création du projet serveur de jeu en C (12/03/2025)](2025-03-12-creation-du-serveur-c.md)
+- [Communications entre back-end et serveur de jeu en C (12/03/2025)](2025-03-12-communications-entre-back-end-et-serveur-c.md)
