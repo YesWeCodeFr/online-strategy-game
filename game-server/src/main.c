@@ -1,5 +1,5 @@
 #include <stdio.h>
-#include "server.h"
+#include "game_server.h"
 
 int main() {
     printf("Démarrage du serveur de jeu (Appuyez sur CTRL+C pour quitter)\n");

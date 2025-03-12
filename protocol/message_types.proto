@@ -1,0 +1,11 @@
+syntax = "proto3";
+
+package gameprotocol;
+
+enum MessageType {
+  UNKNOWN = 0;
+  HELLO = 1;
+  ADD_PLAYER = 2;
+  GET_PLAYER_LIST = 3;
+  PLAYER_LIST = 4;
+} 

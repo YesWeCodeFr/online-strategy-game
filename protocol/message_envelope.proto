@@ -1,0 +1,11 @@
+syntax = "proto3";
+
+package gameprotocol;
+
+import "message_types.proto";
+
+// Enveloppe ultra-compacte pour tous les messages
+message MessageEnvelope {
+  MessageType type = 1;
+  bytes payload = 2;
+} 

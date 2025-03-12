@@ -1,5 +1,5 @@
-#ifndef SERVER_H
-#define SERVER_H
+#ifndef GAME_SERVER_H
+#define GAME_SERVER_H
 
 #include "player.h"
 
