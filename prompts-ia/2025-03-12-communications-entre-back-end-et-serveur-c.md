@@ -359,4 +359,3 @@ Les avantages de cette nouvelle structure sont :
 3. Réutilisabilité du service pour d'autres besoins de hachage
 4. Plus facile à maintenir et à tester
 5. Plus facile à modifier si on veut changer l'algorithme de hachage dans le futur
-
