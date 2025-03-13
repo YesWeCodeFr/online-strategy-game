@@ -17,11 +17,13 @@
     "@fastify/cors": "^8.x.x",
     "bcrypt": "^5.x.x",
     "dotenv": "^16.4.7",
-    "fastify": "^4.x.x"
+    "fastify": "^4.x.x",
+    "protobufjs": "^7.4.0"
   },
   "devDependencies": {
     "@types/bcrypt": "^5.x.x",
     "@types/node": "^20.x.x",
+    "@types/protobufjs": "^6.0.0",
     "@typescript-eslint/eslint-plugin": "^6.x.x",
     "@typescript-eslint/parser": "^6.x.x",
     "eslint": "^8.x.x",

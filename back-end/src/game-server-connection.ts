@@ -1,21 +1,32 @@
 import * as net from 'net';
+import dotenv from 'dotenv'
 import { encodeMessage, decodeMessage, MessageTypes } from './protocol/protocol';
 
+// Charger les variables d'environnement
+dotenv.config()
+
 export class GameServerConnection {
+  private static readonly GAME_SERVER_PORT = parseInt(process.env.GAME_SERVER_PORT || '8888');
+  private static readonly GAME_SERVER_HOST = process.env.GAME_SERVER_HOST || 'localhost';
+  
   private socket: net.Socket | null = null;
   
-  constructor(private host: string, private port: number) {}
+  constructor() {}
   
   connect(): Promise<void> {
     return new Promise((resolve, reject) => {
-      this.socket = net.createConnection(this.port, this.host, () => {
-        console.log('Connecté au serveur de jeu');
-        
-        // Envoyer un message HELLO
-        this.sendHello();
-        
-        resolve();
-      });
+      this.socket = net.createConnection(
+        GameServerConnection.GAME_SERVER_PORT, 
+        GameServerConnection.GAME_SERVER_HOST, 
+        () => {
+          console.log('Connecté au serveur de jeu');
+          
+          // Envoyer un message HELLO
+          this.sendHello();
+          
+          resolve();
+        }
+      );
       
       this.socket.on('data', (data) => {
         try {

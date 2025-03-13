@@ -2,16 +2,20 @@ import { UserRepository } from '../repositories/user.repository'
 import { UserWithoutPassword, LoginResponse } from '../types'
 import { GameServerService } from './game-server.service'
 import { PasswordService } from './password.service'
+import { GameServerConnection } from '../game-server-connection'
 
 export class UserService {
   private userRepository: UserRepository
-  private gameServerService: GameServerService
+  // private gameServerService: GameServerService
   private passwordService: PasswordService
+  private gameServerConnection: GameServerConnection
 
   constructor() {
     this.userRepository = new UserRepository()
-    this.gameServerService = new GameServerService()
+    // this.gameServerService = new GameServerService()
     this.passwordService = new PasswordService()
+    this.gameServerConnection = new GameServerConnection()
+    this.gameServerConnection.connect()
   }
 
   async createUser(nom: string, password: string): Promise<UserWithoutPassword> {
@@ -27,7 +31,8 @@ export class UserService {
     const newUser = this.userRepository.create(nom, hashedPassword)
 
     try {
-      await this.gameServerService.notifyNewPlayer(newUser.id)
+      // await this.gameServerService.notifyNewPlayer(newUser.id)
+      await this.gameServerConnection.addPlayer(newUser.id, newUser.nom)
     } catch (error) {
       console.error('Impossible de notifier le serveur de jeu:', error)
       // On ne bloque pas la création de l'utilisateur si la notification échoue
