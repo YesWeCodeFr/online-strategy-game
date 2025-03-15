@@ -10,6 +10,7 @@ export class UserController {
   private userService: UserService
 
   constructor() {
+    console.log('UserController constructor')
     this.userService = new UserService()
   }
 

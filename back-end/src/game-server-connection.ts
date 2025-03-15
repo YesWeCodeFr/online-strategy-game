@@ -1,6 +1,6 @@
 import * as net from 'net';
 import dotenv from 'dotenv'
-import { encodeMessage, decodeMessage, MessageTypes, MessageType } from './protocol/protocol';
+import { encodeMessage, decodeMessage, MessageTypes } from './protocol/protocol';
 
 // Charger les variables d'environnement
 dotenv.config()
@@ -21,11 +21,9 @@ export class GameServerConnection {
         GameServerConnection.GAME_SERVER_PORT, 
         GameServerConnection.GAME_SERVER_HOST, 
         () => {
-          console.log('Connecté au serveur de jeu');
-          
+          console.log('Connecté au serveur de jeu');          
           // Envoyer un message HELLO
-          this.sendHello();
-          
+          this.sendHello();          
           resolve();
         }
       );

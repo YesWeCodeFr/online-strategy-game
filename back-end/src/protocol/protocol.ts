@@ -22,9 +22,6 @@ const MessageTypeMap: { [key: number]: string } = {
 // Fonction pour encoder un message
 export function encodeMessage(type: number, payload: any): Buffer {
   // Trouvez le type de message correspondant
-  // Afficher tous les types de messages disponibles
-  console.log('Types de messages disponibles:', MessageType.valuesById);
-  console.log('Enveloppe des messages disponibles:', root);
   const messageTypeName = MessageType.valuesById[type];
   if (!messageTypeName) {
     throw new Error(`Type de message inconnu: ${type}`);
@@ -80,4 +77,3 @@ export function decodeMessage(buffer: Buffer): { type: number, payload: any } {
 
 // Exportez les types de messages pour faciliter l'utilisation
 export const MessageTypes = MessageType.values;
-export { MessageType };
