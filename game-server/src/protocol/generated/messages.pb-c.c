@@ -377,7 +377,7 @@ const ProtobufCMessageDescriptor gameprotocol__player_list__descriptor =
   (ProtobufCMessageInit) gameprotocol__player_list__init,
   NULL,NULL,NULL    /* reserved[123] */
 };
-static const ProtobufCFieldDescriptor gameprotocol__player__field_descriptors[3] =
+static const ProtobufCFieldDescriptor gameprotocol__player__field_descriptors[2] =
 {
   {
     "player_id",
@@ -403,28 +403,15 @@ static const ProtobufCFieldDescriptor gameprotocol__player__field_descriptors[3]
     0,             /* flags */
     0,NULL,NULL    /* reserved1,reserved2, etc */
   },
-  {
-    "status",
-    3,
-    PROTOBUF_C_LABEL_NONE,
-    PROTOBUF_C_TYPE_UINT32,
-    0,   /* quantifier_offset */
-    offsetof(Gameprotocol__Player, status),
-    NULL,
-    NULL,
-    0,             /* flags */
-    0,NULL,NULL    /* reserved1,reserved2, etc */
-  },
 };
 static const unsigned gameprotocol__player__field_indices_by_name[] = {
   0,   /* field[0] = player_id */
-  2,   /* field[2] = status */
   1,   /* field[1] = username */
 };
 static const ProtobufCIntRange gameprotocol__player__number_ranges[1 + 1] =
 {
   { 1, 0 },
-  { 0, 3 }
+  { 0, 2 }
 };
 const ProtobufCMessageDescriptor gameprotocol__player__descriptor =
 {
@@ -434,7 +421,7 @@ const ProtobufCMessageDescriptor gameprotocol__player__descriptor =
   "Gameprotocol__Player",
   "gameprotocol",
   sizeof(Gameprotocol__Player),
-  3,
+  2,
   gameprotocol__player__field_descriptors,
   gameprotocol__player__field_indices_by_name,
   1,  gameprotocol__player__number_ranges,

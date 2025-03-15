@@ -12,18 +12,30 @@ root.loadSync([
 // Récupérez les types de messages
 const MessageType = root.lookupEnum('gameprotocol.MessageType');
 const MessageEnvelope = root.lookupType('gameprotocol.MessageEnvelope');
+const MessageTypeMap: { [key: number]: string } = {
+  [MessageType.values.MESSAGE_TYPE_HELLO]: 'gameprotocol.Hello',
+  [MessageType.values.MESSAGE_TYPE_ADD_PLAYER]: 'gameprotocol.AddPlayer',
+  [MessageType.values.MESSAGE_TYPE_GET_PLAYER_LIST]: 'gameprotocol.GetPlayerList',
+  [MessageType.values.MESSAGE_TYPE_PLAYER_LIST]: 'gameprotocol.PlayerList',
+};
 
 // Fonction pour encoder un message
 export function encodeMessage(type: number, payload: any): Buffer {
   // Trouvez le type de message correspondant
+  // Afficher tous les types de messages disponibles
+  console.log('Types de messages disponibles:', MessageType.valuesById);
+  console.log('Enveloppe des messages disponibles:', root);
   const messageTypeName = MessageType.valuesById[type];
   if (!messageTypeName) {
     throw new Error(`Type de message inconnu: ${type}`);
   }
+  const messageName = MessageTypeMap[type];
+  if (!messageName) {
+    throw new Error(`Type de message inconnu: ${type}`);
+  }
   
-  // Récupérez le type de message protobuf
-  const messageName = messageTypeName.toLowerCase().replace(/(^|_)([a-z])/g, (_, __, c) => c.toUpperCase());
-  const payloadType = root.lookupType(`gameprotocol.${messageName}`);
+  // Récupérez le type de message protobuf sans transformation
+  const payloadType = root.lookupType(messageName);
   
   // Encodez le payload
   const payloadMessage = payloadType.create(payload);
@@ -49,10 +61,13 @@ export function decodeMessage(buffer: Buffer): { type: number, payload: any } {
   if (!messageTypeName) {
     throw new Error(`Type de message inconnu: ${(envelope as any).type || envelope.$type}`);
   }
+  const messageName = MessageTypeMap[(envelope as any).type || envelope.$type];
+  if (!messageName) {
+    throw new Error(`Type de message inconnu: ${(envelope as any).type || envelope.$type}`);
+  }
   
-  // Récupérez le type de message protobuf
-  const messageName = messageTypeName.toLowerCase().replace(/(^|_)([a-z])/g, (_, __, c) => c.toUpperCase());
-  const payloadType = root.lookupType(`gameprotocol.${messageName}`);
+  // Même ici, pas besoin de transformation
+  const payloadType = root.lookupType(messageName);
   
   // Décodez le payload
   const payload = payloadType.decode((envelope as any).payload) as any;
@@ -64,4 +79,5 @@ export function decodeMessage(buffer: Buffer): { type: number, payload: any } {
 }
 
 // Exportez les types de messages pour faciliter l'utilisation
-export const MessageTypes = MessageType.values; 
+export const MessageTypes = MessageType.values;
+export { MessageType };

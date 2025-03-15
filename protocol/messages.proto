@@ -2,30 +2,29 @@ syntax = "proto3";
 
 package gameprotocol;
 
-// Message HELLO - simple vérification de présence
+// Message Hello - simple vérification de présence
 message Hello {
   uint32 version = 1;  // Version du protocole
 }
 
-// Message ADD_PLAYER - ajouter un joueur au serveur de jeu
+// Message AddPlayer - ajouter un joueur au serveur de jeu
 message AddPlayer {
   uint32 player_id = 1;
   string username = 2;
 }
 
-// Message GET_PLAYER_LIST - demander la liste des joueurs
+// Message GetPlayerList - demander la liste des joueurs
 message GetPlayerList {
   // Vide - le type de message suffit
 }
 
-// Message PLAYER_LIST - réponse avec la liste des joueurs
+// Message PlayerList - réponse avec la liste des joueurs
 message PlayerList {
   repeated Player players = 1;
 }
 
-// Structure Player utilisée dans PLAYER_LIST
+// Structure Player utilisée dans PlayerList
 message Player {
   uint32 player_id = 1;
-  string username = 2;
-  uint32 status = 3;  // 0 = inactif, 1 = actif, 2 = en jeu, etc.
-} 
+  string username = 2;  
+}

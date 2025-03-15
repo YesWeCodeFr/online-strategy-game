@@ -3,9 +3,9 @@ syntax = "proto3";
 package gameprotocol;
 
 enum MessageType {
-  UNKNOWN = 0;
-  HELLO = 1;
-  ADD_PLAYER = 2;
-  GET_PLAYER_LIST = 3;
-  PLAYER_LIST = 4;
+  MESSAGE_TYPE_UNKNOWN = 0;        // Anciennement UnknownType
+  MESSAGE_TYPE_HELLO = 1;          // Anciennement HelloType
+  MESSAGE_TYPE_ADD_PLAYER = 2;      // Anciennement AddPlayerType
+  MESSAGE_TYPE_GET_PLAYER_LIST = 3; // Anciennement GetPlayerListType
+  MESSAGE_TYPE_PLAYER_LIST = 4;     // Anciennement PlayerListType
 } 

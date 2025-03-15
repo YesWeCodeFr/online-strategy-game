@@ -1,6 +1,6 @@
 import * as net from 'net';
 import dotenv from 'dotenv'
-import { encodeMessage, decodeMessage, MessageTypes } from './protocol/protocol';
+import { encodeMessage, decodeMessage, MessageTypes, MessageType } from './protocol/protocol';
 
 // Charger les variables d'environnement
 dotenv.config()
@@ -11,7 +11,9 @@ export class GameServerConnection {
   
   private socket: net.Socket | null = null;
   
-  constructor() {}
+  constructor() {
+    console.log('GameServerConnection constructor')
+  }
   
   connect(): Promise<void> {
     return new Promise((resolve, reject) => {
@@ -49,14 +51,15 @@ export class GameServerConnection {
     });
   }
   
-  private sendHello(): void {
+  private sendHello(): void {    
+    console.log("sendHello")
     if (!this.socket) return;
     
     const payload = {
       version: 1
     };
-    
-    const buffer = encodeMessage(MessageTypes.HELLO, payload);
+        
+    const buffer = encodeMessage(MessageTypes.MESSAGE_TYPE_HELLO, payload);
     this.socket.write(buffer);
   }
   
@@ -68,23 +71,23 @@ export class GameServerConnection {
       username
     };
     
-    const buffer = encodeMessage(MessageTypes.ADD_PLAYER, payload);
+    const buffer = encodeMessage(MessageTypes.MESSAGE_TYPE_ADD_PLAYER, payload);
     this.socket.write(buffer);
   }
   
   getPlayerList(): void {
     if (!this.socket) return;
     
-    const buffer = encodeMessage(MessageTypes.GET_PLAYER_LIST, {});
+    const buffer = encodeMessage(MessageTypes.MESSAGE_TYPE_GET_PLAYER_LIST, {});
     this.socket.write(buffer);
   }
   
   private handleMessage(type: number, payload: any): void {
     switch (type) {
-      case MessageTypes.HELLO:
-        console.log('Message HELLO reçu:', payload);
+      case MessageTypes.MessageTypeHello:
+        console.log('Message Hello reçu:', payload);
         break;
-      case MessageTypes.PLAYER_LIST:
+      case MessageTypes.PlayerList:
         console.log('Liste des joueurs reçue:', payload.players);
         // Traiter la liste des joueurs
         break;

@@ -28,7 +28,7 @@ typedef struct Gameprotocol__Player Gameprotocol__Player;
 /* --- messages --- */
 
 /*
- * Message HELLO - simple vérification de présence
+ * Message Hello - simple vérification de présence
  */
 struct  Gameprotocol__Hello
 {
@@ -44,7 +44,7 @@ struct  Gameprotocol__Hello
 
 
 /*
- * Message ADD_PLAYER - ajouter un joueur au serveur de jeu
+ * Message AddPlayer - ajouter un joueur au serveur de jeu
  */
 struct  Gameprotocol__AddPlayer
 {
@@ -58,7 +58,7 @@ struct  Gameprotocol__AddPlayer
 
 
 /*
- * Message GET_PLAYER_LIST - demander la liste des joueurs
+ * Message GetPlayerList - demander la liste des joueurs
  */
 struct  Gameprotocol__GetPlayerList
 {
@@ -70,7 +70,7 @@ struct  Gameprotocol__GetPlayerList
 
 
 /*
- * Message PLAYER_LIST - réponse avec la liste des joueurs
+ * Message PlayerList - réponse avec la liste des joueurs
  */
 struct  Gameprotocol__PlayerList
 {
@@ -84,21 +84,17 @@ struct  Gameprotocol__PlayerList
 
 
 /*
- * Structure Player utilisée dans PLAYER_LIST
+ * Structure Player utilisée dans PlayerList
  */
 struct  Gameprotocol__Player
 {
   ProtobufCMessage base;
   uint32_t player_id;
   char *username;
-  /*
-   * 0 = inactif, 1 = actif, 2 = en jeu, etc.
-   */
-  uint32_t status;
 };
 #define GAMEPROTOCOL__PLAYER__INIT \
  { PROTOBUF_C_MESSAGE_INIT (&gameprotocol__player__descriptor) \
-    , 0, (char *)protobuf_c_empty_string, 0 }
+    , 0, (char *)protobuf_c_empty_string }
 
 
 /* Gameprotocol__Hello methods */

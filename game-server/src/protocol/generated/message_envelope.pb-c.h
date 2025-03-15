@@ -35,7 +35,7 @@ struct  Gameprotocol__MessageEnvelope
 };
 #define GAMEPROTOCOL__MESSAGE_ENVELOPE__INIT \
  { PROTOBUF_C_MESSAGE_INIT (&gameprotocol__message_envelope__descriptor) \
-    , GAMEPROTOCOL__MESSAGE_TYPE__UNKNOWN, {0,NULL} }
+    , GAMEPROTOCOL__MESSAGE_TYPE__MESSAGE_TYPE_UNKNOWN, {0,NULL} }
 
 
 /* Gameprotocol__MessageEnvelope methods */

@@ -11,10 +11,12 @@ export class UserService {
   private gameServerConnection: GameServerConnection
 
   constructor() {
+    console.log('UserService constructor')
     this.userRepository = new UserRepository()
     // this.gameServerService = new GameServerService()
     this.passwordService = new PasswordService()
     this.gameServerConnection = new GameServerConnection()
+    console.log("gameServerConnection", this.gameServerConnection)
     this.gameServerConnection.connect()
   }
 

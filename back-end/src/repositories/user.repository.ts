@@ -5,6 +5,7 @@ export class UserRepository {
   private currentId: number
 
   constructor() {
+    console.log('UserRepository constructor')
     this.users = new Map()
     this.currentId = 1
   }

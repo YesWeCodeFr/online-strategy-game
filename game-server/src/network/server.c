@@ -67,12 +67,10 @@ void handle_get_player_list(int client_socket, const void* payload, size_t paylo
     Gameprotocol__Player player2 = GAMEPROTOCOL__PLAYER__INIT;
     
     player1.player_id = 1;
-    player1.username = "Joueur1";
-    player1.status = 1;
+    player1.username = "Joueur1";    
     
     player2.player_id = 2;
-    player2.username = "Joueur2";
-    player2.status = 2;
+    player2.username = "Joueur2";    
     
     players[0] = player1;
     players[1] = player2;
@@ -101,6 +99,7 @@ void handle_get_player_list(int client_socket, const void* payload, size_t paylo
 
 // Fonction pour traiter un message reçu
 void handle_message(int client_socket, message_data_t* message) {
+    printf("Message reçu\n");
     switch (message->type) {
         case MESSAGE_TYPE_HELLO:
             handle_hello(client_socket, message->payload, message->payload_size);

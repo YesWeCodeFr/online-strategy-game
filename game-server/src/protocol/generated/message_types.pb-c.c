@@ -9,22 +9,22 @@
 #include "message_types.pb-c.h"
 static const ProtobufCEnumValue gameprotocol__message_type__enum_values_by_number[5] =
 {
-  { "UNKNOWN", "GAMEPROTOCOL__MESSAGE_TYPE__UNKNOWN", 0 },
-  { "HELLO", "GAMEPROTOCOL__MESSAGE_TYPE__HELLO", 1 },
-  { "ADD_PLAYER", "GAMEPROTOCOL__MESSAGE_TYPE__ADD_PLAYER", 2 },
-  { "GET_PLAYER_LIST", "GAMEPROTOCOL__MESSAGE_TYPE__GET_PLAYER_LIST", 3 },
-  { "PLAYER_LIST", "GAMEPROTOCOL__MESSAGE_TYPE__PLAYER_LIST", 4 },
+  { "MESSAGE_TYPE_UNKNOWN", "GAMEPROTOCOL__MESSAGE_TYPE__MESSAGE_TYPE_UNKNOWN", 0 },
+  { "MESSAGE_TYPE_HELLO", "GAMEPROTOCOL__MESSAGE_TYPE__MESSAGE_TYPE_HELLO", 1 },
+  { "MESSAGE_TYPE_ADD_PLAYER", "GAMEPROTOCOL__MESSAGE_TYPE__MESSAGE_TYPE_ADD_PLAYER", 2 },
+  { "MESSAGE_TYPE_GET_PLAYER_LIST", "GAMEPROTOCOL__MESSAGE_TYPE__MESSAGE_TYPE_GET_PLAYER_LIST", 3 },
+  { "MESSAGE_TYPE_PLAYER_LIST", "GAMEPROTOCOL__MESSAGE_TYPE__MESSAGE_TYPE_PLAYER_LIST", 4 },
 };
 static const ProtobufCIntRange gameprotocol__message_type__value_ranges[] = {
 {0, 0},{0, 5}
 };
 static const ProtobufCEnumValueIndex gameprotocol__message_type__enum_values_by_name[5] =
 {
-  { "ADD_PLAYER", 2 },
-  { "GET_PLAYER_LIST", 3 },
-  { "HELLO", 1 },
-  { "PLAYER_LIST", 4 },
-  { "UNKNOWN", 0 },
+  { "MESSAGE_TYPE_ADD_PLAYER", 2 },
+  { "MESSAGE_TYPE_GET_PLAYER_LIST", 3 },
+  { "MESSAGE_TYPE_HELLO", 1 },
+  { "MESSAGE_TYPE_PLAYER_LIST", 4 },
+  { "MESSAGE_TYPE_UNKNOWN", 0 },
 };
 const ProtobufCEnumDescriptor gameprotocol__message_type__descriptor =
 {
