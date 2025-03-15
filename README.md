@@ -9,3 +9,9 @@ J'ai choisi d'utiliser Cursor pour générer le code, mais il est possible d'uti
 Les réponses au prompts ont été générées avec l'IA Claude 3.5 Sonnet.
 
 [Cliquer sur ce lien pour voir les prompts](prompts-ia/sommaire.md)
+
+Note : générer les fichiers protobuf avec la commande suivante :
+```
+protoc --proto_path=protocol --c_out=game-server/src/protocol/generated protocol/*.proto
+```
+
