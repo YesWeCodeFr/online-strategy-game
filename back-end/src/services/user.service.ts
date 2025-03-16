@@ -1,18 +1,18 @@
 import { UserRepository } from '../repositories/user.repository'
 import { UserWithoutPassword, LoginResponse } from '../types/user.types'
 import { PasswordService } from './password.service'
-import { GameServerConnection } from '../game-server-connection'
+import GameServerService from './game-server.service'
 
 export class UserService {
   private userRepository: UserRepository  
   private passwordService: PasswordService
-  private gameServerConnection: GameServerConnection
+  private gameServerConnection: GameServerService
 
   constructor() {
     console.log('UserService constructor')
     this.userRepository = new UserRepository()
     this.passwordService = new PasswordService()
-    this.gameServerConnection = new GameServerConnection()    
+    this.gameServerConnection = new GameServerService()    
     this.gameServerConnection.connect()
   }
 
