@@ -1,5 +1,5 @@
 import { UserRepository } from '../repositories/user.repository'
-import { UserWithoutPassword, LoginResponse } from '../types'
+import { UserWithoutPassword, LoginResponse } from '../types/user.types'
 import { PasswordService } from './password.service'
 import { GameServerConnection } from '../game-server-connection'
 

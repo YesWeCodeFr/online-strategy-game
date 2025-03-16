@@ -1,4 +1,4 @@
-import { User, UserWithoutPassword } from '../types'
+import { User, UserWithoutPassword } from '../types/user.types'
 
 export class UserRepository {
   private users: Map<number, User>
