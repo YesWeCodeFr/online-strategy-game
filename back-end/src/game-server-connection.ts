@@ -82,10 +82,10 @@ export class GameServerConnection {
   
   private handleMessage(type: number, payload: any): void {
     switch (type) {
-      case MessageTypes.MessageTypeHello:
+      case MessageTypes.MESSAGE_TYPE_HELLO:
         console.log('Message Hello reçu:', payload);
         break;
-      case MessageTypes.PlayerList:
+      case MessageTypes.MESSAGE_TYPE_PLAYER_LIST:
         console.log('Liste des joueurs reçue:', payload.players);
         // Traiter la liste des joueurs
         break;

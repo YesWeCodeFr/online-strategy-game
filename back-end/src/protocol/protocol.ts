@@ -60,7 +60,7 @@ export function decodeMessage(buffer: Buffer): { type: number, payload: any } {
   }
   const messageName = MessageTypeMap[(envelope as any).type || envelope.$type];
   if (!messageName) {
-    throw new Error(`Type de message inconnu: ${(envelope as any).type || envelope.$type}`);
+    throw new Error(`Type de message inconnu (map): ${(envelope as any).type || envelope.$type}`);
   }
   
   // Même ici, pas besoin de transformation
