@@ -26,10 +26,9 @@ export class UserService {
     }
 
     const hashedPassword = await this.passwordService.hash(password)
-    const newUser = this.userRepository.create(nom, hashedPassword)
+    const newUser = this.userRepository.create(nom, hashedPassword)    
 
-    try {
-      // await this.gameServerService.notifyNewPlayer(newUser.id)
+    try {      
       await this.gameServerConnection.addPlayer(newUser.id, newUser.nom)
     } catch (error) {
       console.error('Impossible de notifier le serveur de jeu:', error)
