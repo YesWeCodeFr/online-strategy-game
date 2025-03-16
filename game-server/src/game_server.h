@@ -13,7 +13,7 @@ typedef struct {
 
 GameServer* createServer(void);
 void startServer(GameServer* server);
-void handleNewPlayer(GameServer* server, int playerId);
+void handleNewPlayer(GameServer* server, int playerId, char* playerName);
 void cleanupServer(GameServer* server);
 void setupSignalHandler(GameServer* server);
 

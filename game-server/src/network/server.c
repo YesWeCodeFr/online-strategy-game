@@ -1,4 +1,5 @@
 #include "server.h"
+#include "../game_server.h"
 #include "../protocol/protocol.h"
 #include "../protocol/generated/messages.pb-c.h"
 #include <stdio.h>
@@ -41,7 +42,7 @@ void handle_hello(int client_socket, const void* payload, size_t payload_size) {
 }
 
 // Fonction pour gérer un message ADD_PLAYER
-void handle_add_player(int client_socket, const void* payload, size_t payload_size) {
+void handle_add_player(int client_socket, const void* payload, size_t payload_size, GameServer* gameServer) {
     // Décoder le message AddPlayer
     Gameprotocol__AddPlayer* add_player = gameprotocol__add_player__unpack(NULL, payload_size, payload);
     if (!add_player) {
@@ -52,7 +53,7 @@ void handle_add_player(int client_socket, const void* payload, size_t payload_si
     printf("Message ADD_PLAYER reçu, id: %u, nom: %s\n", add_player->player_id, add_player->username);
     
     // Ajouter le joueur à la liste (code non inclus)
-    // ...
+    handleNewPlayer(gameServer, add_player->player_id, add_player->username);
     
     gameprotocol__add_player__free_unpacked(add_player, NULL);
 }
@@ -98,14 +99,14 @@ void handle_get_player_list(int client_socket, const void* payload, size_t paylo
 }
 
 // Fonction pour traiter un message reçu
-void handle_message(int client_socket, message_data_t* message) {
+void handle_message(int client_socket, message_data_t* message, GameServer* gameServer) {
     printf("Message reçu\n");
     switch (message->type) {
         case MESSAGE_TYPE_HELLO:
             handle_hello(client_socket, message->payload, message->payload_size);
             break;
         case MESSAGE_TYPE_ADD_PLAYER:
-            handle_add_player(client_socket, message->payload, message->payload_size);
+            handle_add_player(client_socket, message->payload, message->payload_size, gameServer);
             break;
         case MESSAGE_TYPE_GET_PLAYER_LIST:
             handle_get_player_list(client_socket, message->payload, message->payload_size);
@@ -153,7 +154,7 @@ int init_server(int port) {
 }
 
 // Démarrer la boucle d'écoute du serveur
-void start_server_loop(int server_socket) {
+void start_server_loop(GameServer* gameServer) {
     int client_socket;
     struct sockaddr_in client_addr;
     socklen_t client_len = sizeof(client_addr);
@@ -164,7 +165,7 @@ void start_server_loop(int server_socket) {
     
     while (1) {
         // Accepter une nouvelle connexion
-        client_socket = accept(server_socket, (struct sockaddr*)&client_addr, &client_len);
+        client_socket = accept(gameServer->socket_fd, (struct sockaddr*)&client_addr, &client_len);
         if (client_socket < 0) {
             perror("Erreur lors de l'acceptation de la connexion");
             continue;
@@ -178,7 +179,7 @@ void start_server_loop(int server_socket) {
             message_data_t* message = decode_message(buffer, bytes_read);
             if (message) {
                 // Traiter le message
-                handle_message(client_socket, message);
+                handle_message(client_socket, message, gameServer);
                 free_message_data(message);
             } else {
                 printf("Erreur lors de la décodage du message\n");

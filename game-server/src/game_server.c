@@ -34,7 +34,7 @@ GameServer* createServer(void) {
         return NULL;
     }
     
-    server->players = createPlayerList(10);
+    server->players = createPlayerList(1024, 1024);
     server->socket_fd = -1;
     
     return server;
@@ -51,12 +51,12 @@ void startServer(GameServer* server) {
     printf("Serveur de jeu démarré sur le port %d\n", PORT);
     
     // Démarrer la boucle d'écoute
-    start_server_loop(server->socket_fd);
+    start_server_loop(server);
 }
 
-void handleNewPlayer(GameServer* server, int playerId) {
-    addPlayer(server->players, playerId);
-    printf("Nouveau joueur ajouté, id: %d\n", playerId);
+void handleNewPlayer(GameServer* server, int playerId, char* playerName) {
+    addPlayer(server->players, playerId, playerName);
+    printf("Nouveau joueur ajouté, id: %d, nom: %s\n", playerId, playerName);
 }
 
 void cleanupServer(GameServer* server) {
