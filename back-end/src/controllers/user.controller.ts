@@ -21,9 +21,10 @@ export class UserController {
     try {
       const { nom, password } = request.body
       const user = await this.userService.createUser(nom, password)
-      reply.code(201).send(user)
+      return reply.code(201).send(user)
     } catch (error) {
-      reply.code(400).send({ error: (error as Error).message })
+      console.error('Error creating user:', error)
+      return reply.code(400).send({ error: (error as Error).message })
     }
   }
 

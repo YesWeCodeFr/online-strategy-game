@@ -13,8 +13,8 @@ const userRoutes: FastifyPluginAsync = async (fastify: FastifyInstance): Promise
   fastify.post<{ Body: CreateUserBody }>(
     '/users',
     async (request: FastifyRequest<{ Body: CreateUserBody }>, reply: FastifyReply) => {
-      const user = await userController.createUser(request, reply)
-      reply.code(201).send(user)
+      return userController.createUser(request, reply)
+      //reply.code(201).send(user)
     }
   )
 
