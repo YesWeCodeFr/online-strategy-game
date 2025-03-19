@@ -15,13 +15,14 @@ enum MessageType {
 
 // Structure pour stocker les données d'un message décodé
 typedef struct {
+  int request_id;
   int type;
   void* payload;
   size_t payload_size;
 } message_data_t;
 
 // Fonction pour encoder un message
-uint8_t* encode_message(int message_type, void* payload, size_t payload_size, size_t* output_size);
+uint8_t* encode_message(int request_id, int message_type, void* payload, size_t payload_size, size_t* output_size);
 
 // Fonction pour décoder un message
 message_data_t* decode_message(const uint8_t* buffer, size_t buffer_size);

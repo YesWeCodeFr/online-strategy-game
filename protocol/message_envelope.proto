@@ -6,6 +6,7 @@ import "message_types.proto";
 
 // Enveloppe ultra-compacte pour tous les messages
 message MessageEnvelope {
-  MessageType type = 1;
-  bytes payload = 2;
+  uint32 requestId = 1;
+  MessageType type = 2;
+  bytes payload = 3;
 } 

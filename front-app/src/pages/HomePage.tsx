@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { RootState } from '../store';
 import { logout } from '../store/authSlice';
 import { Button } from '../components/common/Button';
+import { getUsers } from '../services/userService';
 
 export const HomePage = () => {
   const dispatch = useDispatch();
@@ -12,6 +13,15 @@ export const HomePage = () => {
   const handleLogout = () => {
     dispatch(logout());
     navigate('/auth');
+  };
+
+  const handleShowUsers = async () => {
+    try {
+      const users = await getUsers();
+      console.log(users);
+    } catch (error) {
+      console.error('Erreur lors de la récupération des utilisateurs:', error);
+    }
   };
 
   return (
@@ -26,6 +36,11 @@ export const HomePage = () => {
           label="Se déconnecter" 
           onClick={handleLogout} 
           variant="secondary"
+        />
+        <Button 
+          label="Afficher les utilisateurs" 
+          onClick={handleShowUsers} 
+          variant="primary"
         />
       </div>
     </div>

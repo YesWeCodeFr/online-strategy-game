@@ -30,12 +30,13 @@ typedef struct Gameprotocol__MessageEnvelope Gameprotocol__MessageEnvelope;
 struct  Gameprotocol__MessageEnvelope
 {
   ProtobufCMessage base;
+  uint32_t requestid;
   Gameprotocol__MessageType type;
   ProtobufCBinaryData payload;
 };
 #define GAMEPROTOCOL__MESSAGE_ENVELOPE__INIT \
  { PROTOBUF_C_MESSAGE_INIT (&gameprotocol__message_envelope__descriptor) \
-    , GAMEPROTOCOL__MESSAGE_TYPE__MESSAGE_TYPE_UNKNOWN, {0,NULL} }
+    , 0, GAMEPROTOCOL__MESSAGE_TYPE__MESSAGE_TYPE_UNKNOWN, {0,NULL} }
 
 
 /* Gameprotocol__MessageEnvelope methods */

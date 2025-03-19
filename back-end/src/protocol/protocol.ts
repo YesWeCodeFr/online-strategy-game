@@ -20,7 +20,7 @@ const MessageTypeMap: { [key: number]: string } = {
 };
 
 // Fonction pour encoder un message
-export function encodeMessage(type: number, payload: any): Buffer {
+export function encodeMessage(requestId: number, type: number, payload: any): Buffer {
   // Trouvez le type de message correspondant
   const messageTypeName = MessageType.valuesById[type];
   if (!messageTypeName) {
@@ -40,6 +40,7 @@ export function encodeMessage(type: number, payload: any): Buffer {
   
   // Créez l'enveloppe
   const envelope = {
+    requestId: requestId,
     type: type,
     payload: payloadBuffer
   };
@@ -49,7 +50,7 @@ export function encodeMessage(type: number, payload: any): Buffer {
 }
 
 // Fonction pour décoder un message
-export function decodeMessage(buffer: Buffer): { type: number, payload: any } {
+export function decodeMessage(buffer: Buffer): { requestId: number, type: number, payload: any } {
   // Décodez l'enveloppe
   const envelope = MessageEnvelope.decode(buffer);
   
@@ -70,6 +71,7 @@ export function decodeMessage(buffer: Buffer): { type: number, payload: any } {
   const payload = payloadType.decode((envelope as any).payload) as any;
   
   return {
+    requestId: (envelope as any).requestId,
     type: (envelope as any).type,
     payload: payload.toJSON()
   };

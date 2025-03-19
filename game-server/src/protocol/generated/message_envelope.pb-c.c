@@ -52,11 +52,23 @@ void   gameprotocol__message_envelope__free_unpacked
   assert(message->base.descriptor == &gameprotocol__message_envelope__descriptor);
   protobuf_c_message_free_unpacked ((ProtobufCMessage*)message, allocator);
 }
-static const ProtobufCFieldDescriptor gameprotocol__message_envelope__field_descriptors[2] =
+static const ProtobufCFieldDescriptor gameprotocol__message_envelope__field_descriptors[3] =
 {
   {
-    "type",
+    "requestId",
     1,
+    PROTOBUF_C_LABEL_NONE,
+    PROTOBUF_C_TYPE_UINT32,
+    0,   /* quantifier_offset */
+    offsetof(Gameprotocol__MessageEnvelope, requestid),
+    NULL,
+    NULL,
+    0,             /* flags */
+    0,NULL,NULL    /* reserved1,reserved2, etc */
+  },
+  {
+    "type",
+    2,
     PROTOBUF_C_LABEL_NONE,
     PROTOBUF_C_TYPE_ENUM,
     0,   /* quantifier_offset */
@@ -68,7 +80,7 @@ static const ProtobufCFieldDescriptor gameprotocol__message_envelope__field_desc
   },
   {
     "payload",
-    2,
+    3,
     PROTOBUF_C_LABEL_NONE,
     PROTOBUF_C_TYPE_BYTES,
     0,   /* quantifier_offset */
@@ -80,13 +92,14 @@ static const ProtobufCFieldDescriptor gameprotocol__message_envelope__field_desc
   },
 };
 static const unsigned gameprotocol__message_envelope__field_indices_by_name[] = {
-  1,   /* field[1] = payload */
-  0,   /* field[0] = type */
+  2,   /* field[2] = payload */
+  0,   /* field[0] = requestId */
+  1,   /* field[1] = type */
 };
 static const ProtobufCIntRange gameprotocol__message_envelope__number_ranges[1 + 1] =
 {
   { 1, 0 },
-  { 0, 2 }
+  { 0, 3 }
 };
 const ProtobufCMessageDescriptor gameprotocol__message_envelope__descriptor =
 {
@@ -96,7 +109,7 @@ const ProtobufCMessageDescriptor gameprotocol__message_envelope__descriptor =
   "Gameprotocol__MessageEnvelope",
   "gameprotocol",
   sizeof(Gameprotocol__MessageEnvelope),
-  2,
+  3,
   gameprotocol__message_envelope__field_descriptors,
   gameprotocol__message_envelope__field_indices_by_name,
   1,  gameprotocol__message_envelope__number_ranges,

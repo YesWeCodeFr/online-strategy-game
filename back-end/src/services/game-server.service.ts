@@ -1,6 +1,7 @@
 import * as net from 'net';
 import dotenv from 'dotenv'
 import { encodeMessage, decodeMessage, MessageTypes } from '../protocol/protocol';
+import { UserWithoutPassword } from 'user.types';
 
 // Charger les variables d'environnement
 dotenv.config()
@@ -10,6 +11,7 @@ export default class GameServerService {
   private static readonly GAME_SERVER_HOST = process.env.GAME_SERVER_HOST || 'localhost';
   
   private socket: net.Socket | null = null;
+  private nextRequestId: number = 0;
   
   constructor() {
     console.log('GameServerService constructor')
@@ -31,7 +33,7 @@ export default class GameServerService {
       this.socket.on('data', (data) => {
         try {
           const message = decodeMessage(data);
-          this.handleMessage(message.type, message.payload);
+          this.handleMessage(message.requestId, message.type, message.payload);
         } catch (error) {
           console.error('Erreur de décodage:', error);
         }
@@ -57,7 +59,7 @@ export default class GameServerService {
       version: 1
     };
         
-    const buffer = encodeMessage(MessageTypes.MESSAGE_TYPE_HELLO, payload);
+    const buffer = encodeMessage(this.nextRequestId++, MessageTypes.MESSAGE_TYPE_HELLO, payload);
     this.socket.write(buffer);
   }
   
@@ -69,18 +71,58 @@ export default class GameServerService {
       username
     };
     
-    const buffer = encodeMessage(MessageTypes.MESSAGE_TYPE_ADD_PLAYER, payload);
+    const buffer = encodeMessage(this.nextRequestId++, MessageTypes.MESSAGE_TYPE_ADD_PLAYER, payload);
     this.socket.write(buffer);
   }
   
-  getPlayerList(): void {
-    if (!this.socket) return;
-    
-    const buffer = encodeMessage(MessageTypes.MESSAGE_TYPE_GET_PLAYER_LIST, {});
-    this.socket.write(buffer);
+  getPlayerList(): Promise<UserWithoutPassword[]> {
+    console.log("getPlayerList() ...")
+    return new Promise((resolve, reject) => {
+      console.log("résolution de la promesse ...")
+      if (!this.socket) {
+        this.connect()  // Reconnexion si le socket n'existe pas
+          .then(() => this.sendPlayerListRequest(resolve, reject))
+          .catch(reject);
+      } else {
+        this.sendPlayerListRequest(resolve, reject);
+      }
+      console.log("fin de la promesse")
+    });
   }
   
-  private handleMessage(type: number, payload: any): void {
+  private sendPlayerListRequest(resolve: (users: UserWithoutPassword[]) => void, reject: (error: Error) => void): void {
+    console.log("sendPlayerListRequest ...")
+    const buffer = encodeMessage(this.nextRequestId++, MessageTypes.MESSAGE_TYPE_GET_PLAYER_LIST, {});
+    this.socket?.write(buffer);
+    console.log("socket écrit ...")
+
+    this.socket?.once('data', (data) => {
+      console.log("message reçu ...")
+      if (!this.socket) {
+        console.error('Le socket est déjà fermé, impossible de traiter les données.');
+        return;
+      }
+
+      try {
+        console.log('getPlayerList data : ', data);
+        const message = decodeMessage(data);
+        if (message.type === MessageTypes.MESSAGE_TYPE_PLAYER_LIST) {
+          const usersWithoutPassword: UserWithoutPassword[] = message.payload.players.map((player: any) => ({
+            id: player.player_id,
+            username: player.username
+          }));
+          resolve(usersWithoutPassword);
+        } else {
+          reject(new Error('Type de message inconnu reçu'));
+        }
+      } catch (error) {
+        reject(new Error('Erreur de décodage du message: ' + error));
+      }
+    });
+  }
+  
+  private handleMessage(requestId: number, type: number, payload: any): void {
+    console.log('Message reçu : ' + requestId + ',' + type)
     switch (type) {
       case MessageTypes.MESSAGE_TYPE_HELLO:
         console.log('Message Hello reçu:', payload);

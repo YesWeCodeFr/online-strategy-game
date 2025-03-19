@@ -6,10 +6,11 @@
 #include <string.h>
 
 // Fonction pour encoder un message
-uint8_t* encode_message(int message_type, void* payload, size_t payload_size, size_t* output_size) {
+uint8_t* encode_message(int request_id, int message_type, void* payload, size_t payload_size, size_t* output_size) {
     // Créer l'enveloppe
     Gameprotocol__MessageEnvelope envelope = GAMEPROTOCOL__MESSAGE_ENVELOPE__INIT;
     
+    envelope.requestid = request_id;
     envelope.type = message_type;
     envelope.payload.data = payload;
     envelope.payload.len = payload_size;
@@ -47,6 +48,7 @@ message_data_t* decode_message(const uint8_t* buffer, size_t buffer_size) {
     }
     
     // Remplir les informations de base
+    result->request_id = envelope->requestid;
     result->type = envelope->type;
     result->payload = NULL;
     result->payload_size = 0;

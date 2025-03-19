@@ -13,8 +13,7 @@ const userRoutes: FastifyPluginAsync = async (fastify: FastifyInstance): Promise
   fastify.post<{ Body: CreateUserBody }>(
     '/users',
     async (request: FastifyRequest<{ Body: CreateUserBody }>, reply: FastifyReply) => {
-      return userController.createUser(request, reply)
-      //reply.code(201).send(user)
+      return userController.createUser(request, reply)      
     }
   )
 
@@ -22,6 +21,13 @@ const userRoutes: FastifyPluginAsync = async (fastify: FastifyInstance): Promise
     '/login',
     async (request: FastifyRequest<{ Body: CreateUserBody }>, reply: FastifyReply) => {
       return userController.login(request, reply)
+    }
+  )
+
+  fastify.get(
+    '/users',
+    async (request: FastifyRequest, reply: FastifyReply) => {
+      return userController.getUsers(request, reply)
     }
   )
 }

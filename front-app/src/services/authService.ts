@@ -1,6 +1,3 @@
-// Simulation d'une base de données utilisateurs
-const users = new Map<string, { username: string; password: string }>();
-
 import { API_URL } from '../config/config';
 
 interface AuthResponse {

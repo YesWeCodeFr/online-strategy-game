@@ -7,9 +7,13 @@
 #include <string.h>
 #include <unistd.h>
 #include <arpa/inet.h>
+#include <signal.h>
+#include <errno.h>
+
+// Au début de votre programme, ajoutez :
 
 // Fonction pour gérer un message HELLO
-void handle_hello(int client_socket, const void* payload, size_t payload_size) {
+void handle_hello(int client_socket, int request_id, const void* payload, size_t payload_size) {
     // Décoder le message Hello
     Gameprotocol__Hello* hello = gameprotocol__hello__unpack(NULL, payload_size, payload);
     if (!hello) {
@@ -30,7 +34,7 @@ void handle_hello(int client_socket, const void* payload, size_t payload_size) {
     
     // Envoyer la réponse
     size_t envelope_size;
-    uint8_t* envelope_buffer = encode_message(MESSAGE_TYPE_HELLO, response_buffer, response_size, &envelope_size);
+    uint8_t* envelope_buffer = encode_message(request_id, MESSAGE_TYPE_HELLO, response_buffer, response_size, &envelope_size);
     
     if (envelope_buffer) {
         send(client_socket, envelope_buffer, envelope_size, 0);
@@ -42,7 +46,7 @@ void handle_hello(int client_socket, const void* payload, size_t payload_size) {
 }
 
 // Fonction pour gérer un message ADD_PLAYER
-void handle_add_player(int client_socket, const void* payload, size_t payload_size, GameServer* gameServer) {
+void handle_add_player(int client_socket, int request_id, const void* payload, size_t payload_size, GameServer* gameServer) {
     // Décoder le message AddPlayer
     Gameprotocol__AddPlayer* add_player = gameprotocol__add_player__unpack(NULL, payload_size, payload);
     if (!add_player) {
@@ -59,57 +63,80 @@ void handle_add_player(int client_socket, const void* payload, size_t payload_si
 }
 
 // Fonction pour gérer un message GET_PLAYER_LIST
-void handle_get_player_list(int client_socket, const void* payload, size_t payload_size) {
+void handle_get_player_list(int client_socket, int request_id, const void* payload, size_t payload_size, GameServer* gameServer) {
     printf("Message GET_PLAYER_LIST reçu\n");
     
     // Créer une liste de joueurs (exemple)
-    Gameprotocol__Player players[2];
+    Gameprotocol__Player** players = malloc(2 * sizeof(Gameprotocol__Player*));
+    printf("Message GET_PLAYER_LIST tableau des joueurs créé\n");
     Gameprotocol__Player player1 = GAMEPROTOCOL__PLAYER__INIT;
     Gameprotocol__Player player2 = GAMEPROTOCOL__PLAYER__INIT;
+    printf("Message GET_PLAYER_LIST joueurs créés\n");
     
     player1.player_id = 1;
     player1.username = "Joueur1";    
-    
+    printf("Message GET_PLAYER_LIST joueur 1 créé\n");
     player2.player_id = 2;
     player2.username = "Joueur2";    
+    printf("Message GET_PLAYER_LIST joueur 2 créé\n");
     
-    players[0] = player1;
-    players[1] = player2;
+    players[0] = &player1;
+    players[1] = &player2;
+    printf("Message GET_PLAYER_LIST joueurs ajoutés au tableau\n");
     
     // Créer le message PlayerList
     Gameprotocol__PlayerList player_list = GAMEPROTOCOL__PLAYER_LIST__INIT;
     player_list.n_players = 2;
     player_list.players = players;
-    
+    printf("Message GET_PLAYER_LIST message PlayerList créé\n");
     // Encoder le message
     size_t response_size = gameprotocol__player_list__get_packed_size(&player_list);
+    printf("Message GET_PLAYER_LIST taille du message PlayerList calculée\n");
+    printf("Message GET_PLAYER_LIST taille du message PlayerList: %zu\n", response_size);
     uint8_t* response_buffer = malloc(response_size);
+    printf("Message GET_PLAYER_LIST buffer alloué\n");
     gameprotocol__player_list__pack(&player_list, response_buffer);
-    
+    printf("Message PLAYER_LIST créé\n");
     // Envoyer la réponse
     size_t envelope_size;
-    uint8_t* envelope_buffer = encode_message(MESSAGE_TYPE_PLAYER_LIST, response_buffer, response_size, &envelope_size);
-    
+    uint8_t* envelope_buffer = encode_message(request_id, MESSAGE_TYPE_PLAYER_LIST, response_buffer, response_size, &envelope_size);
+    printf("taille de l'enveloppe: %zu\n", envelope_size);
+    printf("buffer de l'enveloppe: %p\n", envelope_buffer);
+    printf("Message PLAYER_LIST encodé\n");
     if (envelope_buffer) {
-        send(client_socket, envelope_buffer, envelope_size, 0);
-        free(envelope_buffer);
-    }
+        printf("Message PLAYER_LIST à envoyer\n");
     
+        ssize_t bytes_sent = send(gameServer->socket_fd, envelope_buffer, envelope_size, MSG_NOSIGNAL);
+        if (bytes_sent < 0) {
+            if (errno == EPIPE) {
+                fprintf(stderr, "Le client a fermé la connexion\n");
+            } else {
+                perror("Erreur lors de l'envoi des données");
+            }
+            free(envelope_buffer);
+            return;
+        }
+        printf("Message PLAYER_LIST envoyé\n");
+        free(envelope_buffer);
+        printf("Message PLAYER_LIST libéré\n");
+    }
+    printf("Message PLAYER_LIST envoyé\n");
     free(response_buffer);
+    printf("Message PLAYER_LIST libéré\n");
 }
 
 // Fonction pour traiter un message reçu
 void handle_message(int client_socket, message_data_t* message, GameServer* gameServer) {
-    printf("Message reçu\n");
+    printf("Message reçu, request_id: %u\n", message->request_id);
     switch (message->type) {
         case MESSAGE_TYPE_HELLO:
-            handle_hello(client_socket, message->payload, message->payload_size);
+            handle_hello(client_socket, message->request_id, message->payload, message->payload_size);
             break;
         case MESSAGE_TYPE_ADD_PLAYER:
-            handle_add_player(client_socket, message->payload, message->payload_size, gameServer);
+            handle_add_player(client_socket, message->request_id, message->payload, message->payload_size, gameServer);
             break;
         case MESSAGE_TYPE_GET_PLAYER_LIST:
-            handle_get_player_list(client_socket, message->payload, message->payload_size);
+            handle_get_player_list(client_socket, message->request_id, message->payload, message->payload_size, gameServer);
             break;
         default:
             printf("Type de message inconnu: %d\n", message->type);
@@ -118,6 +145,7 @@ void handle_message(int client_socket, message_data_t* message, GameServer* game
 
 // Initialiser le serveur sur un port spécifique
 int init_server(int port) {
+    signal(SIGPIPE, SIG_IGN);
     int server_socket;
     struct sockaddr_in server_addr;
     

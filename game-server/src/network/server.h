@@ -17,8 +17,8 @@ void stop_server(int server_socket);
 
 // Fonctions de gestion des messages
 void handle_message(int client_socket, message_data_t* message, GameServer* gameServer);
-void handle_hello(int client_socket, const void* payload, size_t payload_size);
-void handle_add_player(int client_socket, const void* payload, size_t payload_size, GameServer* gameServer);
-void handle_get_player_list(int client_socket, const void* payload, size_t payload_size);
+void handle_hello(int client_socket, int request_id, const void* payload, size_t payload_size);
+void handle_add_player(int client_socket, int request_id, const void* payload, size_t payload_size, GameServer* gameServer);
+void handle_get_player_list(int client_socket, int request_id, const void* payload, size_t payload_size, GameServer* gameServer);
 
 #endif // SERVER_H 

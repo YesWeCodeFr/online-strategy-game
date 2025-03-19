@@ -26,4 +26,8 @@ export class UserRepository {
   exists(nom: string): boolean {
     return this.findByName(nom) !== undefined
   }
+
+  findAll(): User[] {
+    return Array.from(this.users.values())
+  }
 } 
