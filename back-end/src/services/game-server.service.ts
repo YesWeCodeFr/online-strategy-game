@@ -171,7 +171,7 @@ export default class GameServerService {
         const pendingRequest = this.pendingRequests.get(requestId);
         if (pendingRequest) {
           const usersWithoutPassword: UserWithoutPassword[] = payload.players.map((player: any) => ({
-            id: player.player_id,
+            id: player.playerId,
             username: player.username
           }));
           pendingRequest.resolve(usersWithoutPassword);
