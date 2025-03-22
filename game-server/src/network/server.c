@@ -68,49 +68,36 @@ void handle_get_player_list(int client_socket, int request_id, const void* paylo
     
     // Créer une liste de joueurs (exemple)
     Gameprotocol__Player** players = malloc(2 * sizeof(Gameprotocol__Player*));
-    printf("Message GET_PLAYER_LIST tableau des joueurs créé\n");
     Gameprotocol__Player player1 = GAMEPROTOCOL__PLAYER__INIT;
     Gameprotocol__Player player2 = GAMEPROTOCOL__PLAYER__INIT;
-    printf("Message GET_PLAYER_LIST joueurs créés\n");
     
     player1.player_id = 1;
     player1.username = "Joueur1";    
-    printf("Message GET_PLAYER_LIST joueur 1 créé\n");
     player2.player_id = 2;
     player2.username = "Joueur2";    
-    printf("Message GET_PLAYER_LIST joueur 2 créé\n");
     
     players[0] = &player1;
     players[1] = &player2;
-    printf("Message GET_PLAYER_LIST joueurs ajoutés au tableau\n");
     
     // Créer le message PlayerList
     Gameprotocol__PlayerList player_list = GAMEPROTOCOL__PLAYER_LIST__INIT;
     player_list.n_players = 2;
     player_list.players = players;
-    printf("Message GET_PLAYER_LIST message PlayerList créé\n");
     // Encoder le message
     size_t response_size = gameprotocol__player_list__get_packed_size(&player_list);
-    printf("Message GET_PLAYER_LIST taille du message PlayerList calculée\n");
-    printf("Message GET_PLAYER_LIST taille du message PlayerList: %zu\n", response_size);
     uint8_t* response_buffer = malloc(response_size);
-    printf("Message GET_PLAYER_LIST buffer alloué\n");
     gameprotocol__player_list__pack(&player_list, response_buffer);
-    printf("Message PLAYER_LIST créé\n");
     // Envoyer la réponse
     size_t envelope_size;
     uint8_t* envelope_buffer = encode_message(request_id, MESSAGE_TYPE_PLAYER_LIST, response_buffer, response_size, &envelope_size);
     printf("taille de l'enveloppe: %zu\n", envelope_size);
     printf("buffer de l'enveloppe: %p\n", envelope_buffer);
-    for (size_t i = 0; i <= envelope_size; i++) {
+    for (size_t i = 0; i < envelope_size; i++) {
         printf("%02x ", envelope_buffer[i]);
     }
     printf("\n");
 
-    printf("Message PLAYER_LIST encodé\n");
     if (envelope_buffer) {
-        printf("Message PLAYER_LIST à envoyer\n");
-    
         ssize_t bytes_sent = send(client_socket, envelope_buffer, envelope_size, 0);//MSG_NOSIGNAL);
         if (bytes_sent < 0) {
             if (errno == EPIPE) {
@@ -121,13 +108,9 @@ void handle_get_player_list(int client_socket, int request_id, const void* paylo
             free(envelope_buffer);
             return;
         }
-        printf("Message PLAYER_LIST envoyé\n");
-        free(envelope_buffer);
-        printf("Message PLAYER_LIST libéré\n");
+        free(envelope_buffer);        
     }
-    printf("Message PLAYER_LIST envoyé\n");
-    free(response_buffer);
-    printf("Message PLAYER_LIST libéré\n");
+    free(response_buffer);    
 }
 
 // Fonction pour traiter un message reçu
