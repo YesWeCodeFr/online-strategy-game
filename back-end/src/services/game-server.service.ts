@@ -12,21 +12,29 @@ export default class GameServerService {
   
   private socket: net.Socket | null = null;
   private nextRequestId: number = 0;
+  private pendingRequests: Map<number, {
+    resolve: (value: UserWithoutPassword[]) => void;
+    reject: (error: any) => void;
+  }>;
   
   constructor() {
-    console.log('GameServerService constructor')
+    console.log('GameServerService constructor')    
+    this.pendingRequests = new Map();
   }
   
   connect(): Promise<void> {
     return new Promise((resolve, reject) => {
+      console.log('Tentative de connexion au serveur de jeu...');
       this.socket = net.createConnection(
         GameServerService.GAME_SERVER_PORT, 
         GameServerService.GAME_SERVER_HOST, 
         () => {
-          console.log('Connecté au serveur de jeu');          
-          // Envoyer un message HELLO
-          this.sendHello();          
-          resolve();
+          console.log('Socket connecté, envoi du HELLO...');          
+          this.sendHello();
+          // Attendons la réponse du HELLO avant de résoudre
+          setTimeout(() => {
+            resolve();
+          }, 100); // Petit délai pour s'assurer que le HELLO est traité
         }
       );
       
@@ -52,15 +60,20 @@ export default class GameServerService {
   }
   
   private sendHello(): void {    
-    console.log("sendHello")
-    if (!this.socket) return;
+    console.log("Envoi du message HELLO")
+    if (!this.socket) {
+      console.error("Impossible d'envoyer HELLO: socket null");
+      return;
+    }
     
     const payload = {
       version: 1
     };
-        
-    const buffer = encodeMessage(this.nextRequestId++, MessageTypes.MESSAGE_TYPE_HELLO, payload);
+    
+    const requestId = this.nextRequestId++;    
+    const buffer = encodeMessage(requestId, MessageTypes.MESSAGE_TYPE_HELLO, payload);
     this.socket.write(buffer);
+    console.log("Message HELLO envoyé avec requestId:", requestId);
   }
   
   addPlayer(playerId: number, username: string): void {
@@ -74,9 +87,32 @@ export default class GameServerService {
     const buffer = encodeMessage(this.nextRequestId++, MessageTypes.MESSAGE_TYPE_ADD_PLAYER, payload);
     this.socket.write(buffer);
   }
-  
+
   getPlayerList(): Promise<UserWithoutPassword[]> {
     console.log("getPlayerList() ...")
+    const requestId = this.nextRequestId++;
+    const promise = new Promise<UserWithoutPassword[]>((resolve, reject) => {
+      if (!this.socket) {
+        reject(new Error("Rejet : connexion fermée"));
+        return;
+      }
+      this.pendingRequests.set(requestId, { resolve, reject });
+      const buffer = encodeMessage(requestId, MessageTypes.MESSAGE_TYPE_GET_PLAYER_LIST, {});
+      console.log("Envoi des données ... " + requestId);
+      this.socket.write(buffer);
+      console.log("Données envoyées ...");
+    });
+
+    promise.finally(() => {
+      console.log("fin de la promesse ...")
+      this.pendingRequests.delete(requestId);
+    });
+
+    return promise;
+  }
+  
+  getOldPlayerList(): Promise<UserWithoutPassword[]> {
+    console.log("getOldPlayerList() ...")
     return new Promise((resolve, reject) => {
       console.log("résolution de la promesse ...")
       if (!this.socket) {
@@ -86,7 +122,7 @@ export default class GameServerService {
       } else {
         this.sendPlayerListRequest(resolve, reject);
       }
-      console.log("fin de la promesse")
+      console.log("fin de la promesse")      
     });
   }
   
@@ -95,7 +131,9 @@ export default class GameServerService {
     const buffer = encodeMessage(this.nextRequestId++, MessageTypes.MESSAGE_TYPE_GET_PLAYER_LIST, {});
     this.socket?.write(buffer);
     console.log("socket écrit ...")
+    resolve([])
 
+    /*
     this.socket?.once('data', (data) => {
       console.log("message reçu ...")
       if (!this.socket) {
@@ -119,6 +157,7 @@ export default class GameServerService {
         reject(new Error('Erreur de décodage du message: ' + error));
       }
     });
+    */
   }
   
   private handleMessage(requestId: number, type: number, payload: any): void {
@@ -129,7 +168,14 @@ export default class GameServerService {
         break;
       case MessageTypes.MESSAGE_TYPE_PLAYER_LIST:
         console.log('Liste des joueurs reçue:', payload.players);
-        // Traiter la liste des joueurs
+        const pendingRequest = this.pendingRequests.get(requestId);
+        if (pendingRequest) {
+          const usersWithoutPassword: UserWithoutPassword[] = payload.players.map((player: any) => ({
+            id: player.player_id,
+            username: player.username
+          }));
+          pendingRequest.resolve(usersWithoutPassword);
+        }
         break;
       default:
         console.log('Message inconnu reçu:', type, payload);
