@@ -1,6 +1,12 @@
 import fastify, { FastifyInstance } from 'fastify'
 import cors from '@fastify/cors'
 import userRoutes from './routes/user.routes'
+import GameServerService from './services/game-server.service'
+import container from './container/container'
+
+const gameServerService: GameServerService = new GameServerService();
+gameServerService.connect();
+container.register('game-server-service', gameServerService);
 
 const server: FastifyInstance = fastify({ logger: true })
 

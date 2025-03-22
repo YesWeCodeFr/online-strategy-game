@@ -2,6 +2,7 @@ import { UserRepository } from '../repositories/user.repository'
 import { UserWithoutPassword, LoginResponse } from '../types/user.types'
 import { PasswordService } from './password.service'
 import GameServerService from './game-server.service'
+import container from '../container/container'
 
 export class UserService {
   private userRepository: UserRepository  
@@ -12,8 +13,7 @@ export class UserService {
     console.log('UserService constructor')
     this.userRepository = new UserRepository()
     this.passwordService = new PasswordService()
-    this.gameServerService = new GameServerService()    
-    this.gameServerService.connect()
+    this.gameServerService = container.get('game-server-service')    
   }
 
   async createUser(nom: string, password: string): Promise<UserWithoutPassword> {
