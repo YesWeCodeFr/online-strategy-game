@@ -102,14 +102,19 @@ void handle_get_player_list(int client_socket, int request_id, const void* paylo
     uint8_t* envelope_buffer = encode_message(request_id, MESSAGE_TYPE_PLAYER_LIST, response_buffer, response_size, &envelope_size);
     printf("taille de l'enveloppe: %zu\n", envelope_size);
     printf("buffer de l'enveloppe: %p\n", envelope_buffer);
+    for (size_t i = 0; i <= envelope_size; i++) {
+        printf("%02x ", envelope_buffer[i]);
+    }
+    printf("\n");
+
     printf("Message PLAYER_LIST encodé\n");
     if (envelope_buffer) {
         printf("Message PLAYER_LIST à envoyer\n");
     
-        ssize_t bytes_sent = send(gameServer->socket_fd, envelope_buffer, envelope_size, MSG_NOSIGNAL);
+        ssize_t bytes_sent = send(client_socket, envelope_buffer, envelope_size, 0);//MSG_NOSIGNAL);
         if (bytes_sent < 0) {
             if (errno == EPIPE) {
-                fprintf(stderr, "Le client a fermé la connexion\n");
+                fprintf(stderr, "Le client a fermé la connexion.\n");
             } else {
                 perror("Erreur lors de l'envoi des données");
             }
