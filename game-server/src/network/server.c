@@ -2,6 +2,7 @@
 #include "../game_server.h"
 #include "../protocol/protocol.h"
 #include "../protocol/generated/messages.pb-c.h"
+#include "../player.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -66,51 +67,67 @@ void handle_add_player(int client_socket, int request_id, const void* payload, s
 void handle_get_player_list(int client_socket, int request_id, const void* payload, size_t payload_size, GameServer* gameServer) {
     printf("Message GET_PLAYER_LIST reçu\n");
     
-    // Créer une liste de joueurs (exemple)
-    Gameprotocol__Player** players = malloc(2 * sizeof(Gameprotocol__Player*));
-    Gameprotocol__Player player1 = GAMEPROTOCOL__PLAYER__INIT;
-    Gameprotocol__Player player2 = GAMEPROTOCOL__PLAYER__INIT;
+    PlayerList* playerList = gameServer->players;
+
+    // Créer une liste de joueurs avec allocation dynamique
+    Gameprotocol__Player** players = malloc(playerList->count * sizeof(Gameprotocol__Player*));
     
-    player1.player_id = 1;
-    player1.username = "Joueur1";    
-    player2.player_id = 2;
-    player2.username = "Joueur2";    
+    // Allouer dynamiquement chaque joueur
+    for (int i = 0; i < playerList->count; i++) {
+        players[i] = malloc(sizeof(Gameprotocol__Player));
+        gameprotocol__player__init(players[i]);  // Initialiser la structure
+        
+        players[i]->player_id = playerList->players[i].id;
+        
+        // Dupliquer la chaîne de caractères pour éviter les problèmes de pointeur
+        //players[i]->username = strdup(playerList->players[i].name);
+        players[i]->username = playerList->players[i].name;
+    }
     
-    players[0] = &player1;
-    players[1] = &player2;
-    
+    printf("Nombre de joueurs : %d\n", playerList->count);
+
     // Créer le message PlayerList
     Gameprotocol__PlayerList player_list = GAMEPROTOCOL__PLAYER_LIST__INIT;
-    player_list.n_players = 2;
+    player_list.n_players = playerList->count;
     player_list.players = players;
+    
     // Encoder le message
     size_t response_size = gameprotocol__player_list__get_packed_size(&player_list);
     uint8_t* response_buffer = malloc(response_size);
     gameprotocol__player_list__pack(&player_list, response_buffer);
+    
     // Envoyer la réponse
     size_t envelope_size;
     uint8_t* envelope_buffer = encode_message(request_id, MESSAGE_TYPE_PLAYER_LIST, response_buffer, response_size, &envelope_size);
+
     printf("taille de l'enveloppe: %zu\n", envelope_size);
     printf("buffer de l'enveloppe: %p\n", envelope_buffer);
-    for (size_t i = 0; i < envelope_size; i++) {
+    for (size_t i = 0; i < envelope_size && i < 120; i++) {
         printf("%02x ", envelope_buffer[i]);
     }
     printf("\n");
 
     if (envelope_buffer) {
-        ssize_t bytes_sent = send(client_socket, envelope_buffer, envelope_size, 0);//MSG_NOSIGNAL);
+        ssize_t bytes_sent = send(client_socket, envelope_buffer, envelope_size, 0);
         if (bytes_sent < 0) {
             if (errno == EPIPE) {
                 fprintf(stderr, "Le client a fermé la connexion.\n");
             } else {
                 perror("Erreur lors de l'envoi des données");
-            }
-            free(envelope_buffer);
-            return;
+            }            
         }
         free(envelope_buffer);        
     }
-    free(response_buffer);    
+    
+    // Libérer la mémoire
+    free(response_buffer);
+    
+    // Libérer la mémoire des joueurs
+    for (int i = 0; i < playerList->count; i++) {
+        // free(players[i]->username);  // Libérer la chaîne dupliquée
+        free(players[i]);            // Libérer la structure du joueur
+    }
+    free(players);
 }
 
 // Fonction pour traiter un message reçu
