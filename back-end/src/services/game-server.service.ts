@@ -169,12 +169,16 @@ export default class GameServerService {
       case MessageTypes.MESSAGE_TYPE_PLAYER_LIST:
         console.log('Liste des joueurs reçue:', payload.players);
         const pendingRequest = this.pendingRequests.get(requestId);
-        if (pendingRequest) {
-          const usersWithoutPassword: UserWithoutPassword[] = payload.players.map((player: any) => ({
-            id: player.playerId,
-            username: player.username
-          }));
-          pendingRequest.resolve(usersWithoutPassword);
+        if (pendingRequest) {          
+          if (payload.players) {
+            const usersWithoutPassword: UserWithoutPassword[] = payload.players.map((player: any) => ({
+              id: player.playerId,
+              username: player.username
+            }));
+            pendingRequest.resolve(usersWithoutPassword);
+          } else  {
+            pendingRequest.resolve([]);
+          }
         }
         break;
       default:
