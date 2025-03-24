@@ -116,6 +116,8 @@ void handle_get_player_list(int client_socket, int request_id, const void* paylo
                 perror("Erreur lors de l'envoi des données");
             }            
         }
+        printf("Nombre d'octets envoyés : %zd\n", bytes_sent);
+        
         free(envelope_buffer);        
     }
     
