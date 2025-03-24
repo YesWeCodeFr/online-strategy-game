@@ -40,6 +40,7 @@ export default class GameServerService {
       
       this.socket.on('data', (data) => {
         try {
+          console.log("Messaga reçu");
           const message = decodeMessage(data);
           this.handleMessage(message.requestId, message.type, message.payload);
         } catch (error) {
@@ -166,8 +167,8 @@ export default class GameServerService {
       case MessageTypes.MESSAGE_TYPE_HELLO:
         console.log('Message Hello reçu:', payload);
         break;
-      case MessageTypes.MESSAGE_TYPE_PLAYER_LIST:
-        console.log('Liste des joueurs reçue:', payload.players);
+      case MessageTypes.MESSAGE_TYPE_PLAYER_LIST:        
+        console.log('Liste des joueurs reçue');
         const pendingRequest = this.pendingRequests.get(requestId);
         if (pendingRequest) {          
           if (payload.players) {
