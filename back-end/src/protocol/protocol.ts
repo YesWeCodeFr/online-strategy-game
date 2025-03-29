@@ -51,6 +51,8 @@ export function encodeMessage(requestId: number, type: number, payload: any): Bu
 
 // Fonction pour décoder un message
 export function decodeMessage(buffer: Buffer): { requestId: number, type: number, payload: any } {
+
+  
   // Décodez l'enveloppe
   const envelope = MessageEnvelope.decode(buffer);
   

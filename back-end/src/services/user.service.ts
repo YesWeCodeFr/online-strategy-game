@@ -60,7 +60,7 @@ export class UserService {
     //const users = this.userRepository.findAll() // Récupération de tous les utilisateurs
     console.log("getUsers (dans user.service) ...")
     const users = await this.gameServerService.getPlayerList()
-    console.log("getUsers : " + users);
+    console.log("getUsers : " + users.length);
     return users
   }
 } 

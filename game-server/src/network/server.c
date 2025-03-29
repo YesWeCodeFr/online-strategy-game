@@ -108,7 +108,7 @@ void handle_get_player_list(int client_socket, int request_id, const void* paylo
     printf("\n");
 
     if (envelope_buffer) {
-        ssize_t bytes_sent = send(client_socket, envelope_buffer, envelope_size, 0);
+        ssize_t bytes_sent = send(client_socket, envelope_buffer, envelope_size, MSG_NOSIGNAL);
         if (bytes_sent < 0) {
             if (errno == EPIPE) {
                 fprintf(stderr, "Le client a fermé la connexion.\n");

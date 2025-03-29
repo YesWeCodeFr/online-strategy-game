@@ -49,7 +49,7 @@ export class UserController {
     try {
       console.log('getUsers (dans user.controller) ...') 
       const users = await this.userService.getUsers()
-      console.log('getUsers : ', users)
+      console.log('getUsers : ', users.length)
       return reply.code(200).send(users)
     } catch (error) {
       console.error('Error fetching users:', error)

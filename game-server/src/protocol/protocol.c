@@ -4,6 +4,7 @@
 #include "generated/messages.pb-c.h"
 #include <stdlib.h>
 #include <string.h>
+#include <arpa/inet.h>
 
 // Fonction pour encoder un message
 uint8_t* encode_message(int request_id, int message_type, void* payload, size_t payload_size, size_t* output_size) {
@@ -15,17 +16,21 @@ uint8_t* encode_message(int request_id, int message_type, void* payload, size_t 
     envelope.payload.data = payload;
     envelope.payload.len = payload_size;
     
-    // Calculer la taille nécessaire
-    *output_size = gameprotocol__message_envelope__get_packed_size(&envelope);
+    // Calculer la taille nécessaire (correspond à la taille du buffer + 4 octets représentant la taille)
+    *output_size = gameprotocol__message_envelope__get_packed_size(&envelope) + 4;
     
-    // Allouer la mémoire pour le message encodé
+     // Allouer la mémoire pour le message encodé avec 4 octets supplémentaires
     uint8_t* buffer = malloc(*output_size);
     if (!buffer) {
         return NULL;
     }
     
-    // Encoder le message
-    gameprotocol__message_envelope__pack(&envelope, buffer);
+    // Stocker la taille totale dans les 4 premiers octets
+    uint32_t network_order_size = htonl(*output_size);
+    memcpy(buffer, &network_order_size, 4);
+    
+    // Encoder le message après les 4 premiers octets
+    gameprotocol__message_envelope__pack(&envelope, buffer + 4);
     
     return buffer;
 }

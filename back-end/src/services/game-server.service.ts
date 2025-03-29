@@ -16,6 +16,8 @@ export default class GameServerService {
     resolve: (value: UserWithoutPassword[]) => void;
     reject: (error: any) => void;
   }>;
+  private buffer: Buffer = Buffer.alloc(0);
+  private expectedSize: number | null = null;
   
   constructor() {
     console.log('GameServerService constructor')    
@@ -39,12 +41,21 @@ export default class GameServerService {
       );
       
       this.socket.on('data', (data) => {
-        try {
-          console.log("Messaga reçu");
-          const message = decodeMessage(data);
-          this.handleMessage(message.requestId, message.type, message.payload);
-        } catch (error) {
-          console.error('Erreur de décodage:', error);
+        this.buffer = Buffer.concat([this.buffer, data]);
+        console.log("données reçues : " + data.byteLength + " octets");
+
+        while (this.buffer.length >= 4 && (this.expectedSize === null || this.buffer.length >= this.expectedSize)) {
+          if (this.expectedSize === null) {
+            this.expectedSize = this.buffer.readUInt32BE(0);
+            console.log("expected size : " + this.expectedSize + " octets");
+          }
+
+          if (this.buffer.length >= this.expectedSize) {
+            const completeMessage = this.buffer.subarray(4, this.expectedSize);
+            this.handleCompleteMessage(completeMessage);
+            this.buffer = this.buffer.subarray(this.expectedSize);
+            this.expectedSize = null;
+          }
         }
       });
       
@@ -161,6 +172,15 @@ export default class GameServerService {
     */
   }
   
+  private handleCompleteMessage(message: Buffer): void {
+    try {
+      const decodedMessage = decodeMessage(message);
+      this.handleMessage(decodedMessage.requestId, decodedMessage.type, decodedMessage.payload);
+    } catch (error) {
+      console.error('Erreur de décodage:', error);
+    }
+  }
+  
   private handleMessage(requestId: number, type: number, payload: any): void {
     console.log('Message reçu : ' + requestId + ',' + type)
     switch (type) {
@@ -177,7 +197,7 @@ export default class GameServerService {
               username: player.username
             }));
             pendingRequest.resolve(usersWithoutPassword);
-          } else  {
+          } else  {
             pendingRequest.resolve([]);
           }
         }
