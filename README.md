@@ -14,4 +14,3 @@ Note : générer les fichiers protobuf avec la commande suivante :
 ```
 protoc --proto_path=protocol --c_out=game-server/src/protocol/generated protocol/*.proto
 ```
-
